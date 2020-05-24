@@ -1,5 +1,10 @@
 package tetris.main;
 
-public class Main {
+import tetris.engine.Game;
 
+public class Main {
+	public static void main(String[] args) {
+		Game game = new Game();
+		game.start();		
+	}
 }
