@@ -11,10 +11,12 @@ public class GameScr extends Screen{
 	
 	private BufferedImage backGround;
 	private InGame inGame;
+	
+	private int level = 1;
 
 	public GameScr(Game game) {
 		super(game);
-		inGame = new InGame(this);
+		inGame = new InGame(this, level);
 		backGround = FileLoader.loadImage("/backGround.png");
 	}
 
