@@ -16,11 +16,16 @@ public class InGame {
 	private BufferedImage blocks;
 	private final int blockSize = 30;
 	
+	private boolean gameOver = false;
+	
+	private int level;
+	
 	private int score;
 	
-	public InGame(GameScr gameScr) {
+	public InGame(GameScr gameScr, int level) {
 		
 		this.gameScr = gameScr;
+		this.level = level;
 		
 		//TODO
 	}
@@ -36,6 +41,10 @@ public class InGame {
 	
 	private void keyUpdate() {
 		//TODO
+	}
+	
+	private void checkGameOver() {
+		
 	}
 	
 	private void setCurrentShape() {
@@ -57,6 +66,14 @@ public class InGame {
 
 	public int getBlockSize() {
 		return blockSize;
+	}
+	
+	public int getScore() {
+		return score;
+	}
+
+	public int getLevel() {
+		return level;
 	}
 
 }

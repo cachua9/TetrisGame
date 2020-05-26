@@ -13,6 +13,8 @@ private Game game;
 	private final int NUM_KEYS = 256;
 	private boolean[] keys = new boolean[NUM_KEYS];
 	private boolean[] keysLast = new boolean[NUM_KEYS];
+	private long[] lastTimeKeyHold = new long[NUM_KEYS];
+	private int delayHold[] = new int[NUM_KEYS];
 	
 	private final int NUM_BUTTONS = 6;
 	private boolean[] buttons = new boolean[NUM_BUTTONS];
@@ -46,6 +48,18 @@ private Game game;
 	
 	public boolean isKey(int keyCode) {
 		return keys[keyCode];
+	}
+	public boolean isKeyHold(int keyCode) {
+		if (isKeyDown(keyCode)) {
+			delayHold[keyCode] = 600;
+		}
+		if(System.currentTimeMillis() - lastTimeKeyHold[keyCode] > delayHold[keyCode] || isKeyDown(keyCode)) {
+			lastTimeKeyHold[keyCode] = System.currentTimeMillis();
+			delayHold[keyCode] = delayHold[keyCode] - 300 < 50 ? 50 : delayHold[keyCode] - 300;
+			return keys[keyCode];
+		} else {
+			return false;
+		}
 	}
 	public boolean isKeyUp(int keyCode) {
 		return !keys[keyCode] && keysLast[keyCode];

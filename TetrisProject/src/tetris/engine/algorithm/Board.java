@@ -34,5 +34,13 @@ public class Board {
 	public int[][] getMatrix() {
 		return matrix;
 	}
+	
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeigth() {
+		return heigth;
+	}
 
 }
