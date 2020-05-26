@@ -37,11 +37,11 @@ public class Shape {
 		//TODO
 	}
 	
-	private void update() {
+	public void update() {
 		//TODO
 	}
 	
-	private void paint(Graphics g) {
+	public void paint(Graphics g) {
 		//TODO
 	}
 	
