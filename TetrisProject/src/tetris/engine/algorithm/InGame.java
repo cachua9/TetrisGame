@@ -1,9 +1,8 @@
 package tetris.engine.algorithm;
 
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 
 import tetris.engine.FileLoader;
 import tetris.engine.gui.screen.GameScr;
@@ -31,40 +30,40 @@ public class InGame {
 		this.level = level;
 		
 		//TODO
-		score = 0;
+		score =0;
 		board = new Board(this);
-		blocks = FileLoader.loadImage("tiles.png");
+		blocks = FileLoader.loadImage("/tiles.png");
 		
-		shapes[0] = new Shape(new int[][] {
+		shapes[0] = new Shape(new int[][]{
 			{1, 1},
 			{1, 1}
 		}, blocks.getSubimage(0, 0, blockSize, blockSize), this, 1);
-		shapes[1] = new Shape(new int[][] {
+		shapes[1] = new Shape(new int[][]{
 			{0, 1, 0},
 			{1, 1, 1},
 			{0, 0, 0}
 		}, blocks.getSubimage(blockSize, 0, blockSize, blockSize), this, 2);
-		shapes[2] = new Shape(new int[][] {
+		shapes[2] = new Shape(new int[][]{
 			{1, 0, 0},
 			{1, 1, 1},
 			{0, 0, 0}
 		}, blocks.getSubimage(blockSize*2, 0, blockSize, blockSize), this, 3);
-		shapes[3] = new Shape(new int[][] {
+		shapes[3] = new Shape(new int[][]{
 			{0, 0, 1},
 			{1, 1, 1},
 			{0, 0, 0}
 		}, blocks.getSubimage(blockSize*3, 0, blockSize, blockSize), this, 4);
-		shapes[4] = new Shape(new int[][] {
-			{1, 0, 0},
+		shapes[4] = new Shape(new int[][]{
 			{1, 1, 0},
-			{0, 1, 0}
-		}, blocks.getSubimage(blockSize*4, 0, blockSize, blockSize), this, 5);
-		shapes[5] = new Shape(new int[][] {
-			{0, 0, 1},
 			{0, 1, 1},
-			{0, 1, 0}
+			{0, 0, 0}
+		}, blocks.getSubimage(blockSize*4, 0, blockSize, blockSize), this, 5);
+		shapes[5] = new Shape(new int[][]{
+			{0, 1, 1},
+			{1, 1, 0},
+			{0, 0, 0}
 		}, blocks.getSubimage(blockSize*5, 0, blockSize, blockSize), this, 6);
-		shapes[6] = new Shape(new int[][] {
+		shapes[6] = new Shape(new int[][]{
 			{0, 0, 0, 0},
 			{1, 1, 1, 1},
 			{0, 0, 0, 0},
@@ -80,17 +79,28 @@ public class InGame {
 		currentShape.update();
 		if(currentShape.isCollision()) {
 			board.setShapeToBoard(currentShape);
-			score += board.checkLine() * 10;
-			System.out.println(score);
-			setCurrentShape();
-		}		
+			score += board.checkLine() * (9 + level);		
+			checkGameOver();
+			if(!gameOver) setCurrentShape();
+		}
 		keyUpdate();
-		
 	}
 	
 	public void paint(Graphics g) {
 		//TODO
 		currentShape.paint(g);
+		
+		for(int row = 0; row < nextShape.getMatrix().length; row ++)
+		{
+			for(int col = 0; col < nextShape.getMatrix()[0].length; col ++)
+			{
+				if(nextShape.getMatrix()[row][col] != 0)
+				{
+					g.drawImage(nextShape.getBlock(), col*30 + 320 + (4 - nextShape.getMatrix()[0].length) * 10, row*30 + 50, null);	
+				}
+			}		
+		}
+		
 		board.paint(g);
 	}
 	
@@ -106,16 +116,20 @@ public class InGame {
 		if(gameScr.getGame().getInput().isKeyUp(KeyEvent.VK_DOWN)) {
 			currentShape.speedDown();
 		}
-		if(gameScr.getGame().getInput().isKeyDown(KeyEvent.VK_RIGHT)) {
+		if(gameScr.getGame().getInput().isKeyHold(KeyEvent.VK_RIGHT)) {
 			currentShape.setDeltaX(1);
 		}
-		if(gameScr.getGame().getInput().isKeyDown(KeyEvent.VK_LEFT)) {
+		if(gameScr.getGame().getInput().isKeyHold(KeyEvent.VK_LEFT)) {
 			currentShape.setDeltaX(-1);
 		}
 	}
 	
 	private void checkGameOver() {
-		
+		for(int col = 0; col < board.getMatrix()[0].length; col++) {
+			if(board.getMatrix()[0][col] != 0) {
+				gameOver = true;
+			}
+		}
 	}
 	
 	private void setCurrentShape() {
