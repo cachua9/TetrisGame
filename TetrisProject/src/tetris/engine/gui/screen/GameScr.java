@@ -86,7 +86,7 @@ public class GameScr extends Screen{
 		
 		g.setFont(new Font("Georgia", Font.BOLD, 25));
 		g.setColor(Color.WHITE);
-		g.drawString("Level" + level, game.getWidth() - 125, 200);
+		g.drawString("Level  " + level, game.getWidth() - 125, 200);
 		
 		g.drawString("Score",  game.getWidth() - 125, 250);
 		g.drawString(inGame.getScore() + "", game.getWidth() - 125, 280);
