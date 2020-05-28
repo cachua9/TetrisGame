@@ -14,11 +14,11 @@ public class Board {
 		matrix = new int[heigth][width];
 	}	
 	
-	private void update() {
+	public void update() {
 		//TODO
 	}
 	
-	private void paint(Graphics g) {
+	public void paint(Graphics g) {
 		//TODO
 		for(int row = 0; row < matrix.length; row++) {
 			for (int col = 0; col < matrix[row].length; col++) {
