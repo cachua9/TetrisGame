@@ -156,6 +156,10 @@ public class InGame {
 		return blockSize;
 	}
 	
+	public boolean isGameOver() {
+		return gameOver;
+	}
+	
 	public int getScore() {
 		return score;
 	}
