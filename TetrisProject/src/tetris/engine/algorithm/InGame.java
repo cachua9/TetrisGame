@@ -79,7 +79,7 @@ public class InGame {
 		currentShape.update();
 		if(currentShape.isCollision()) {
 			board.setShapeToBoard(currentShape);
-			score += board.checkLine() * (9 + level);		
+			score += board.checkLine() * (8 + level * 2);		
 			checkGameOver();
 			if(!gameOver) setCurrentShape();
 		}
