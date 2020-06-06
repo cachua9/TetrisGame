@@ -6,8 +6,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
+import javax.sound.sampled.Clip;
 import javax.swing.JFrame;
 
+import tetris.engine.FileLoader;
 import tetris.engine.Game;
 import tetris.engine.gui.screen.GameScr;
 import tetris.engine.gui.screen.MenuScr;
@@ -24,6 +26,10 @@ public class Window {
 	private Canvas canvas;
 	private BufferStrategy bs;
 	private Graphics g;
+	
+	private boolean isMute = false;
+	
+	private Clip music;
 	
 	//private Input input;
 	
@@ -52,17 +58,28 @@ public class Window {
 		
 		//input = game.getInput();
 		
+		music = FileLoader.LoadSound("/music.wav");
+		music.loop(Clip.LOOP_CONTINUOUSLY);
+		
 		menuScr = new MenuScr(game);
 		gameScr = new GameScr(game);
 	}
 	
 	public void update() {
 		//TODO
-		gameScr.update();
+		if(screen == Screen.Game) {
+			gameScr.update();
+		} else {
+			menuScr.update();
+		}
 	}
 	
 	public void paint() {
-		gameScr.paint(g);
+		if(screen == Screen.Game) {
+			gameScr.paint(g);
+		} else {
+			menuScr.paint(g);
+		}
 		bs.show();
 	}
 
@@ -72,6 +89,22 @@ public class Window {
 
 	public void setScreen(Screen screen) {
 		this.screen = screen;
+	}
+
+	public GameScr getGameScr() {
+		return gameScr;
+	}
+
+	public boolean isMute() {
+		return isMute;
+	}
+
+	public void setMute(boolean isMute) {
+		this.isMute = isMute;
+	}
+
+	public Clip getMusic() {
+		return music;
 	}
 
 }

@@ -17,33 +17,22 @@ import tetris.engine.gui.MyButton;
 
 public class GameScr extends Screen{
 	
-	
 	private BufferedImage backGround;
 	private BufferedImage gameOver;
 	private BufferedImage backToMenu;
+	private BufferedImage speak;
 	private BufferedImage pause;
-	private BufferedImage speaker;
-	private BufferedImage menuSmall;
-	private BufferedImage playContinue;
-	private BufferedImage playNewGame;
-	private BufferedImage quit;
-	private Clip music;
+	private BufferedImage playAgainst;
+
 	private InGame inGame;
-	
 	private ArrayList<MyButton> buttons = new ArrayList<MyButton>();
-	private ArrayList<MyButton> buttons2 = new ArrayList<MyButton>();
-	private MyButton btnBackToMenuButton;
-	private MyButton btnSpeakButton;
-	private MyButton btnPauseButton;
-	private MyButton btnPlayContinueButton;
-	private MyButton btnQuitButton;
-	private MyButton btnPlayNewGameButton;
+	private MyButton btnBackToMenu;
+	private MyButton btnSpeak;
+	private MyButton btnPause;
 	
-	private boolean isPause = false;
-	private int isMute = 0;
-	private boolean isBackToMenu = false;
+	private boolean isPause = false;	
+	
 	private int level = 1;
-	
 
 	public GameScr(Game game) {
 		super(game);
@@ -51,126 +40,118 @@ public class GameScr extends Screen{
 		backGround = FileLoader.loadImage("/backGround.png");
 		gameOver = FileLoader.loadImage("/gameover.png");
 		backToMenu = FileLoader.loadImage("/backToMenu.png");
-		pause = FileLoader.loadImage("/pause.png");
-		speaker = FileLoader.loadImage("/speaker.png");
-		playContinue = FileLoader.loadImage("/playContinue.png");
-		menuSmall = FileLoader.loadImage("/bgr1.png");
-		quit = FileLoader.loadImage("/quit.jpeg");
-		playNewGame = FileLoader.loadImage("/playNewGame.jpg");
+		pause = FileLoader.loadImage("/pauseAndPlay.png");
+		speak = FileLoader.loadImage("/speaker.png");
+		playAgainst = FileLoader.loadImage("/playagainst.png");
 		
-		music = FileLoader.LoadSound("/alan1.wav");
-		music.loop(Clip.LOOP_CONTINUOUSLY);
+		btnBackToMenu = new MyButton(game, backToMenu, 355, 520, 40, 40);
+		btnSpeak = new MyButton(game, speak.getSubimage(0, 0, 512, 512), 355, 440, 40, 40);
+		btnPause = new MyButton(game, pause.getSubimage(0, 0, 512, 512), 355, 360, 40, 40);
 		
-		
-		
-		btnBackToMenuButton = new MyButton(game, backToMenu, 350, 520, 50, 50);
-		btnPauseButton = new MyButton(game,pause, 350, 360, 50, 50);
-		btnSpeakButton = new MyButton(game, speaker.getSubimage(isMute * 512, 0, 512, 512), 350, 440, 50, 50);
-		btnPlayContinueButton = new MyButton(game, playContinue, 60, 150, 200, 50);
-		btnQuitButton = new MyButton(game, quit, 100, 250, 100, 50);
-		btnPlayNewGameButton = new MyButton(game, playNewGame, 100, 200, 100, 50);
-		
-		buttons.add(btnBackToMenuButton);
-		buttons.add(btnPauseButton);
-		buttons.add(btnSpeakButton);
-		
-		
-		buttons2.add(btnPlayContinueButton);
-		buttons2.add(btnQuitButton);
-		buttons2.add(btnPlayNewGameButton);
+		buttons.add(btnBackToMenu);
+		buttons.add(btnPause);
+		buttons.add(btnSpeak);
 	}
 
 	@Override
 	public void update() {
 		if(!inGame.isGameOver() && !isPause) {
 			inGame.update();
-		}
-		if(buttons!=null) {
-			for(MyButton button : buttons) {
+		}		
+		if(buttons != null) {
+			for (MyButton button : buttons) {
 				button.update();
 			}
 		}
-		if(btnSpeakButton.isMouseDown()){
-			isMute = 1 - isMute;
-			btnSpeakButton.setImage(speaker.getSubimage(isMute * 512, 0,  512, 512));
-			if(isMute == 1) {
-				music.stop();
+		if (btnSpeak.isMouseUp()) {
+			game.getWindow().setMute(!game.getWindow().isMute());
+			//System.out.println(isMute);
+			btnSpeak.setImage(speak.getSubimage(512*(game.getWindow().isMute()?1:0), 0, 512, 512));
+			if(game.getWindow().isMute()) {
+				game.getWindow().getMusic().stop();
 			}
 			else {
-				music.start();
-				music.loop(Clip.LOOP_CONTINUOUSLY);
+				game.getWindow().getMusic().start();
+				game.getWindow().getMusic().loop(Clip.LOOP_CONTINUOUSLY);
 			}
 		}
-		if(btnPauseButton.isMouseDown()) {
-			isPause = !isPause;
+		if(btnPause.isMouseUp()) {
+			if(!inGame.isGameOver()) {
+				isPause = !isPause;
+				btnPause.setImage(pause.getSubimage(512*(isPause?1:0), 0, 512, 512));
+			} else {
+				setNewGame(level);
+			}
 		}
-		if(btnBackToMenuButton.isMouseDown()) {
-			isBackToMenu = true;
+		if(btnBackToMenu.isMouseUp()) {
+			if(!inGame.isGameOver()) {
+				isPause = true;
+			}
+			game.getWindow().setScreen(tetris.engine.gui.Window.Screen.Menu);
 		}
 	}
 
 	@Override
 	public void paint(Graphics g) {
-		g.drawImage(backGround, 0, 0, game.getWindow().getCanvas().getWidth(), game.getWindow().getCanvas().getHeight(), null);		
+		g.drawImage(backGround, 0, 0, game.getWindow().getCanvas().getWidth(), game.getWindow().getCanvas().getHeight(), null);	
 		
-		//TODO anything paint
 		Graphics2D g2d = (Graphics2D)g;
 		g2d.setStroke(new BasicStroke(2));
-		g2d.setColor(new Color(0, 0, 0, 100));
-		for(int i =0; i<=inGame.getBoard().getHeigth(); i++) {
-			g2d.drawLine(0,  i*inGame.getBlockSize(), inGame.getBoard().getWidth()*inGame.getBlockSize(), i*inGame.getBlockSize());
+		g2d.setColor(new Color(0, 0, 0, 100));		
+		for(int i = 0; i <= inGame.getBoard().getHeigth(); i++)
+		{
+			g2d.drawLine(0, i*inGame.getBlockSize(), inGame.getBoard().getWidth()*inGame.getBlockSize(), i*inGame.getBlockSize());
 		}
-		for(int j = 0; j <= inGame.getBoard().getWidth(); j++) {
+		for(int j = 0; j <= inGame.getBoard().getWidth(); j++)
+		{
 			g2d.drawLine(j*inGame.getBlockSize(), 0, j*inGame.getBlockSize(), inGame.getBoard().getHeigth()*inGame.getBlockSize());
 		}
+		//TODO anything paint
 		
-		g.setFont(new Font("Georgia", Font.BOLD, 25));
+		g.setFont(new Font("Comic Sans MS", Font.BOLD, 25));
 		g.setColor(Color.WHITE);
-		g.drawString("Level" + level, game.getWidth() - 125, 200);
+		g.drawString("Level  " + level, game.getWidth() - 125, 200);
 		
-		g.drawString("Score",  game.getWidth() - 125, 250);
+		g.drawString("Score", game.getWidth() - 125, 250);
 		g.drawString(inGame.getScore() + "", game.getWidth() - 125, 280);
 		
+		//g.drawImage(backToMenu, 325, 300 ,100 ,100 , null);
 		inGame.paint(g);
 		
 		if(isPause) {
-			g.drawImage(menuSmall, 10,  100,  300,  200,  null);
-			if(buttons2 != null) {
-				for(MyButton button: buttons2) {
-					button.paint(g);
-				}
-			}
-			if(btnPlayContinueButton.isMouseDown()) {
-				isPause = !isPause;
-				
-			}
-			if(btnPlayNewGameButton.isMouseDown()) {
-				game.start();
-			}
-			if(btnQuitButton.isMouseDown()) {
-				System.exit(0);
-			}
+			//System.out.println("game pause");
 		}
 		
-		if(isBackToMenu) {
-			g.drawImage(gameOver,  20,  150,  267,  200,  null);
+		if(inGame.isGameOver()) {
+			btnPause.setImage(playAgainst);
+		} else {
+			btnPause.setImage(pause.getSubimage(512*(isPause?1:0), 0, 512, 512));
 		}
-		
+		btnSpeak.setImage(speak.getSubimage(512*(game.getWindow().isMute()?1:0), 0, 512, 512));
 		if(buttons != null) {
-			for(MyButton button: buttons) {
+			for (MyButton button : buttons) {
 				button.paint(g);
 			}
 		}
-		if(inGame.isGameOver()) {
-			g.drawImage(gameOver,  20,  150,  267,  200,  null);
-		}
-	
 		
-	
+		if(inGame.isGameOver()) {
+			g.drawImage(gameOver, 20, 150 ,267 ,200 , null);
+		}
+		
 	}
+	
 	public void setNewGame(int level) {
 		this.level = level;
+		this.isPause = false;
 		inGame = new InGame(this, level);
+	}
+
+	public boolean isPause() {
+		return isPause;
+	}
+
+	public void setPause(boolean isPause) {
+		this.isPause = isPause;
 	}
 
 }
