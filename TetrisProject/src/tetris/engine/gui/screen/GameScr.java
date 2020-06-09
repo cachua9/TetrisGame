@@ -154,4 +154,4 @@ public class GameScr extends Screen{
 		this.isPause = isPause;
 	}
 
-}
+}	
