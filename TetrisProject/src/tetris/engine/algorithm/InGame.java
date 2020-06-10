@@ -16,6 +16,7 @@ public class InGame {
 	private Shape currentShape, nextShape;
 	
 	private BufferedImage blocks;
+	
 	private final int blockSize = 30;
 	
 	private boolean gameOver = false;
