@@ -4,8 +4,6 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 
-import javax.sound.sampled.Clip;
-
 import tetris.engine.FileLoader;
 import tetris.engine.gui.screen.GameScr;
 
