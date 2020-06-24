@@ -2,26 +2,26 @@ package tetris.engine.algorithm;
 
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
-import tetris.engine.FileLoader;
 import tetris.engine.gui.screen.GameScr;
 
 public class InGame {
 	
 	private GameScr gameScr;
 	
-	private Board board;
-	private Shape[] shapes = new Shape[7];
+	private Board board;	
 	private Shape currentShape, nextShape;
 	
-	private BufferedImage blocks;
+	private ArrayList<Block> nextShapeBlocks = new ArrayList<Block>();
 	
 	private final int blockSize = 30;
 	
 	private boolean gameOver = false;
 	
 	private int level;
+	
+	private long count;
 	
 	private int score;
 	
@@ -31,45 +31,9 @@ public class InGame {
 		this.level = level;
 		
 		//TODO
-		score =0;
-		board = new Board(this);
-		blocks = FileLoader.loadImage("/tiles.png");
-		
-		shapes[0] = new Shape(new int[][]{
-			{1, 1},
-			{1, 1}
-		}, blocks.getSubimage(0, 0, blockSize, blockSize), this, 1);
-		shapes[1] = new Shape(new int[][]{
-			{0, 1, 0},
-			{1, 1, 1},
-			{0, 0, 0}
-		}, blocks.getSubimage(blockSize, 0, blockSize, blockSize), this, 2);
-		shapes[2] = new Shape(new int[][]{
-			{1, 0, 0},
-			{1, 1, 1},
-			{0, 0, 0}
-		}, blocks.getSubimage(blockSize*2, 0, blockSize, blockSize), this, 3);
-		shapes[3] = new Shape(new int[][]{
-			{0, 0, 1},
-			{1, 1, 1},
-			{0, 0, 0}
-		}, blocks.getSubimage(blockSize*3, 0, blockSize, blockSize), this, 4);
-		shapes[4] = new Shape(new int[][]{
-			{1, 1, 0},
-			{0, 1, 1},
-			{0, 0, 0}
-		}, blocks.getSubimage(blockSize*4, 0, blockSize, blockSize), this, 5);
-		shapes[5] = new Shape(new int[][]{
-			{0, 1, 1},
-			{1, 1, 0},
-			{0, 0, 0}
-		}, blocks.getSubimage(blockSize*5, 0, blockSize, blockSize), this, 6);
-		shapes[6] = new Shape(new int[][]{
-			{0, 0, 0, 0},
-			{1, 1, 1, 1},
-			{0, 0, 0, 0},
-			{0, 0, 0, 0}
-		}, blocks.getSubimage(blockSize*6, 0, blockSize, blockSize), this, 7);
+		count = 0;
+		score = 0;
+		board = new Board();
 		
 		setNextShape();
 		setCurrentShape();
@@ -89,20 +53,19 @@ public class InGame {
 	
 	public void paint(Graphics g) {
 		//TODO
+		board.paint(g);
+		
 		currentShape.paint(g);
 		
-		for(int row = 0; row < nextShape.getMatrix().length; row ++)
-		{
-			for(int col = 0; col < nextShape.getMatrix()[0].length; col ++)
-			{
-				if(nextShape.getMatrix()[row][col] != 0)
-				{
-					g.drawImage(nextShape.getBlock(), col*30 + 320 + (4 - nextShape.getMatrix()[0].length) * 10, row*30 + 50, null);	
-				}
-			}		
+		if(nextShape.getColor() == 7) {
+			for (Block block : nextShapeBlocks) {
+				block.setColor((int)(Math.random()*7));
+			}
+		}		
+		for (Block block : nextShapeBlocks) {
+			block.paint(g);
 		}
-		
-		board.paint(g);
+				
 	}
 	
 	private void keyUpdate() {
@@ -118,16 +81,16 @@ public class InGame {
 			currentShape.speedDown();
 		}
 		if(gameScr.getGame().getInput().isKeyHold(KeyEvent.VK_RIGHT)) {
-			currentShape.setDeltaX(1);
+			currentShape.moveRight();
 		}
 		if(gameScr.getGame().getInput().isKeyHold(KeyEvent.VK_LEFT)) {
-			currentShape.setDeltaX(-1);
+			currentShape.moveLeft();
 		}
 	}
 	
 	private void checkGameOver() {
-		for(int col = 0; col < board.getMatrix()[0].length; col++) {
-			if(board.getMatrix()[0][col] != 0) {
+		for (Block block : board.getBlocks()) {
+			if(block.getY() == 0) {
 				gameOver = true;
 			}
 		}
@@ -141,16 +104,44 @@ public class InGame {
 	}
 	private void setNextShape() {
 		//TODO
-		int index = (int)(Math.random()*shapes.length);
-		nextShape = new Shape(shapes[index].getMatrix(), shapes[index].getBlock(), this, shapes[index].getColor());
+		int index = (int)(Math.random()*7);
+		switch (index) {
+		case 0:
+			nextShape = new ShapeO(this, 0);			
+			break;
+		case 1:
+			nextShape = new ShapeT(this, 1);
+			break;
+		case 2:
+			nextShape = new ShapeL(this, 2);
+			break;
+		case 3:
+			nextShape = new ShapeJ(this, 3);
+			break;
+		case 4:
+			nextShape = new ShapeS(this, 4);
+			break;
+		case 5:
+			nextShape = new ShapeZ(this, 5);
+			break;
+		case 6:
+			nextShape = new ShapeI(this, 6);
+			break;
+		default:
+			break;
+		}
+		count++;
+		if(count % 10 == 0) {
+			nextShape.setColor(7);
+		}	
+		nextShapeBlocks = new ArrayList<Block>();
+		for (Block block : nextShape.getBlocks()) {
+			nextShapeBlocks.add(new Block(block.getColor(), block.getX() - nextShape.getX() + 11, block.getY() - nextShape.getY() + 2));
+		}
 	}
 
 	public Board getBoard() {
 		return board;
-	}
-
-	public BufferedImage getBlocks() {
-		return blocks;
 	}
 
 	public int getBlockSize() {
