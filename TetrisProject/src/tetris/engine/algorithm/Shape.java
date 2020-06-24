@@ -48,20 +48,27 @@ public class Shape {
 					break;
 				}
 			}
-			for (Block block2 : inGame.getBoard().getBlocks()) {
-				if(block.getX() == block2.getX() && block.getY() + 1 == block2.getY()) {
-					if(now - lastTime > delay/2) {
-						collision = true;
-						break;
+			if(color != 7) {
+				for (Block block2 : inGame.getBoard().getBlocks()) {
+					if(block.getX() == block2.getX() && block.getY() + 1 == block2.getY()) {
+						if(now - lastTime > delay/2) {
+							collision = true;
+							break;
+						}
 					}
 				}
-			}
+			}			
 		}
 		if(now - lastTime > delay && !collision) {
 			lastTime = now;
 			y++;
 			for (Block block : blocks) {
 				block.setLocal(block.getX(), block.getY() + 1);
+			}
+		}
+		if(color == 7) {
+			for (Block block : blocks) {
+				block.setColor((int)(Math.random()*7));
 			}
 		}
 	}
@@ -104,14 +111,16 @@ public class Shape {
 			block.setLocal(block.getX() + tmp, block.getY());
 		}
 		x += tmp;
-		for (Block block : tmpBlocks) {
-			for (Block block2 : inGame.getBoard().getBlocks()) {
-				if(block.getX() == block2.getX() && block.getY() == block2.getY()) {
-					flag = false;
-					break;
+		if(color != 7) {
+			for (Block block : tmpBlocks) {
+				for (Block block2 : inGame.getBoard().getBlocks()) {
+					if(block.getX() == block2.getX() && block.getY() == block2.getY()) {
+						flag = false;
+						break;
+					}
 				}
 			}
-		}
+		}		
 		if (flag) {
 			blocks = tmpBlocks;
 		}
@@ -136,12 +145,14 @@ public class Shape {
 				flag = false;
 				break;
 			}
-			for (Block block2 : inGame.getBoard().getBlocks()) {
-				if(block.getX() == block2.getX() && block.getY() == block2.getY()) {
-					flag = false;
-					break;
+			if(color != 7) {
+				for (Block block2 : inGame.getBoard().getBlocks()) {
+					if(block.getX() == block2.getX() && block.getY() == block2.getY()) {
+						flag = false;
+						break;
+					}
 				}
-			}
+			}			
 		}
 		if (flag) {
 			blocks = tmpBlocks;
@@ -180,6 +191,9 @@ public class Shape {
 
 	public void setLastTime(long lastTime) {
 		this.lastTime = lastTime;
+	}
+	public void setColor(int color) {
+		this.color = color;
 	}
 
 }

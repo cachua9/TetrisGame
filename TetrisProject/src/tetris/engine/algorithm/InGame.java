@@ -21,6 +21,8 @@ public class InGame {
 	
 	private int level;
 	
+	private long count;
+	
 	private int score;
 	
 	public InGame(GameScr gameScr, int level) {
@@ -29,7 +31,8 @@ public class InGame {
 		this.level = level;
 		
 		//TODO
-		score =0;
+		count = 0;
+		score = 0;
 		board = new Board();
 		
 		setNextShape();
@@ -50,14 +53,19 @@ public class InGame {
 	
 	public void paint(Graphics g) {
 		//TODO
+		board.paint(g);
+		
 		currentShape.paint(g);
 		
+		if(nextShape.getColor() == 7) {
+			for (Block block : nextShapeBlocks) {
+				block.setColor((int)(Math.random()*7));
+			}
+		}		
 		for (Block block : nextShapeBlocks) {
 			block.paint(g);
 		}
-		
-		
-		board.paint(g);
+				
 	}
 	
 	private void keyUpdate() {
@@ -122,6 +130,10 @@ public class InGame {
 		default:
 			break;
 		}
+		count++;
+		if(count % 10 == 0) {
+			nextShape.setColor(7);
+		}	
 		nextShapeBlocks = new ArrayList<Block>();
 		for (Block block : nextShape.getBlocks()) {
 			nextShapeBlocks.add(new Block(block.getColor(), block.getX() - nextShape.getX() + 11, block.getY() - nextShape.getY() + 2));
