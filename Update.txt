@@ -1,0 +1,11 @@
+CHI TIẾT THAY ĐỔI SAU BUỔI BẢO VỆ
+
+*Các thay đổi:
+- Thêm class mới: Block - là class tạo nên các đối tượng là khối vuông nhỏ. Các hình "Shape" sẽ được cấu thành từ các Block này.
+- Thêm các class ShapeO, ShapeI, ShapeL, ShaprT, ShapeJ, ShapeS, ShapeZ là các class con kế thừa từ Shape chứa các thuộc tính riêng.
+- Thêm hình đặc biệt sẽ xuất hiện mỗi 10 hình, hình này sẽ hiển thị bằng cách các khối sẽ nhấp nháy màu liên tục là có tính chất có thể đi xuyên vật thể đến khi chạm đáy.
+
+*Phần trăm đóng góp của thành viên nhóm:
+- Hoàng Thành Lâm: 50%
+- Bùi Như Phú: 25%
+- Đặng Công Tiến: 25%
